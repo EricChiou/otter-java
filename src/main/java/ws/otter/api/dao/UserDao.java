@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 import ws.otter.api.dao.base.BaseDao;
 import ws.otter.api.vo.user.*;
 import ws.otter.constants.StatusCode;
-import ws.otter.entity.UserEntity;
+import ws.otter.model.user.UserEntity;
 import ws.otter.util.Encrypt;
 import ws.otter.web.JWT;
 import ws.otter.web.ResponseHandler;
@@ -23,10 +23,10 @@ public class UserDao extends BaseDao {
 
         String sql = "INSERT INTO !table ( !accCol, !pwdCol, !nameCol ) VALUES ( :acc, :pwd, :name )";
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("table", UserEntity.TABLE);
-        params.put("accCol", UserEntity.ACC);
-        params.put("pwdCol", UserEntity.PWD);
-        params.put("nameCol", UserEntity.NAME);
+        params.put("table", userPo.table);
+        params.put("accCol", userPo.acc);
+        params.put("pwdCol", userPo.pwd);
+        params.put("nameCol", userPo.name);
         params.put("acc", signUpVo.acc);
         params.put("pwd", Encrypt.sha3Encrypt(signUpVo.pwd));
         params.put("name", signUpVo.name);
@@ -45,12 +45,12 @@ public class UserDao extends BaseDao {
 
         String sql = "SELECT !idCol, !accCol, !nameCol, !roleCol FROM !table WHERE !accCol=:acc AND !pwdCol=:pwd";
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("table", UserEntity.TABLE);
-        params.put("idCol", UserEntity.ID);
-        params.put("accCol", UserEntity.ACC);
-        params.put("pwdCol", UserEntity.PWD);
-        params.put("nameCol", UserEntity.NAME);
-        params.put("roleCol", UserEntity.ROLE_CODE);
+        params.put("table", userPo.table);
+        params.put("idCol", userPo.id);
+        params.put("accCol", userPo.acc);
+        params.put("pwdCol", userPo.pwd);
+        params.put("nameCol", userPo.name);
+        params.put("roleCol", userPo.roleCode);
         params.put("acc", acc);
         params.put("pwd", Encrypt.sha3Encrypt(pwd));
 
@@ -75,9 +75,9 @@ public class UserDao extends BaseDao {
 
         String sql = "SELECT !accCol, !nameCol FROM !table WHERE !accCol=:acc";
         Map<String, Object> params = new HashMap<String, Object>();
-        params.put("table", UserEntity.TABLE);
-        params.put("accCol", UserEntity.ACC);
-        params.put("nameCol", UserEntity.NAME);
+        params.put("table", userPo.table);
+        params.put("accCol", userPo.acc);
+        params.put("nameCol", userPo.name);
         params.put("acc", acc);
 
         try {
@@ -87,10 +87,10 @@ public class UserDao extends BaseDao {
             }
 
             Map<String, Object> userData = result.get(0);
-            UserEntity userEnt = new UserEntity();
-            userEnt.acc = (String) userData.get(UserEntity.ACC);
-            userEnt.name = (String) userData.get(UserEntity.NAME);
-            return Mono.just(ResponseHandler.ok().toMap(userEnt));
+            UserEntity entity = new UserEntity();
+            entity.acc = (String) userData.get(userPo.acc);
+            entity.name = (String) userData.get(userPo.name);
+            return Mono.just(ResponseHandler.ok().toMap(entity));
 
         } catch (Exception e) {
             errHandler.handle(e, null);

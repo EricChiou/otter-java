@@ -36,7 +36,12 @@ public class JdbcConvert {
             Character c = sql.charAt(i);
             if (c == '!') {
                 String key = getKey(sql, i + 1);
-                newSql += params.get(key);
+                String keyVal = (String) params.get(key);
+                if (keyVal != null && !"".equals(keyVal)) {
+                    newSql += keyVal;
+                } else {
+                    newSql += key;
+                }
                 i += key.length();
 
             } else {
