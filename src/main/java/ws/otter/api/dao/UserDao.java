@@ -34,6 +34,7 @@ public class UserDao extends BaseDao {
         try {
             jdbc.update(sql, params);
         } catch (Exception e) {
+            errHandler.handle(e, null);
             return dbErrorHandler.handle(e);
         }
 
@@ -65,6 +66,7 @@ public class UserDao extends BaseDao {
             return Mono.just(ResponseHandler.ok().toMap(jwt));
 
         } catch (Exception e) {
+            errHandler.handle(e, null);
             return dbErrorHandler.handle(e);
         }
     }
@@ -91,6 +93,7 @@ public class UserDao extends BaseDao {
             return Mono.just(ResponseHandler.ok().toMap(userEnt));
 
         } catch (Exception e) {
+            errHandler.handle(e, null);
             return dbErrorHandler.handle(e);
         }
     }
