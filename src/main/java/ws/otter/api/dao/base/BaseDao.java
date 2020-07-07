@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ws.otter.model.user.UserPo;
 import ws.otter.util.DbErrorHandler;
 import ws.otter.util.ErrorHandler;
-import ws.otter.util.jdbcConvert.JdbcConvert;
+import ws.otter.util.JdbcConvert;
 
 abstract public class BaseDao {
 
@@ -14,9 +14,8 @@ abstract public class BaseDao {
 
     protected DbErrorHandler dbErrorHandler = new DbErrorHandler();
 
-    // protected UserEntity userEntity;
-    protected UserPo userPo;
+    protected UserPo userPo = new UserPo();
 
-    protected ErrorHandler errHandler;
+    protected ErrorHandler errHandler = new ErrorHandler();
 
 }

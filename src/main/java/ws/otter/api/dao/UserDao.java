@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import reactor.core.publisher.Mono;
@@ -21,20 +22,21 @@ public class UserDao extends BaseDao {
 
     public Mono<ResponseHandler> UserSignUp(WebInput webInput, SignUpVo signUpVo) {
 
-        String sql = "INSERT INTO !table ( !accCol, !pwdCol, !nameCol ) VALUES ( :acc, :pwd, :name )";
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("table", userPo.table);
-        params.put("accCol", userPo.acc);
-        params.put("pwdCol", userPo.pwd);
-        params.put("nameCol", userPo.name);
-        params.put("acc", signUpVo.acc);
-        params.put("pwd", Encrypt.sha3Encrypt(signUpVo.pwd));
-        params.put("name", signUpVo.name);
+        String sql = "INSERT INTO #table ( #accCol, #pwdCol, #nameCol ) VALUES ( :acc, :pwd, :name )";
+        Map<String, String> columns = new HashMap<String, String>();
+        columns.put("table", userPo.table);
+        columns.put("accCol", userPo.acc);
+        columns.put("pwdCol", userPo.pwd);
+        columns.put("nameCol", userPo.name);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("acc", signUpVo.acc);
+        params.addValue("pwd", Encrypt.sha3Encrypt(signUpVo.pwd));
+        params.addValue("name", signUpVo.name);
 
         try {
-            jdbc.update(sql, params);
+            jdbc.update(sql, columns, params);
         } catch (Exception e) {
-            errHandler.handle(e, null);
+            errHandler.handle(e);
             return dbErrorHandler.handle(e);
         }
 
@@ -43,19 +45,20 @@ public class UserDao extends BaseDao {
 
     public Mono<ResponseHandler> UserSignIn(WebInput webInput, String acc, String pwd) {
 
-        String sql = "SELECT !idCol, !accCol, !nameCol, !roleCol FROM !table WHERE !accCol=:acc AND !pwdCol=:pwd";
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("table", userPo.table);
-        params.put("idCol", userPo.id);
-        params.put("accCol", userPo.acc);
-        params.put("pwdCol", userPo.pwd);
-        params.put("nameCol", userPo.name);
-        params.put("roleCol", userPo.roleCode);
-        params.put("acc", acc);
-        params.put("pwd", Encrypt.sha3Encrypt(pwd));
+        String sql = "SELECT #idCol, #accCol, #nameCol, #roleCol FROM #table WHERE #accCol=:acc AND #pwdCol=:pwd";
+        Map<String, String> columns = new HashMap<String, String>();
+        columns.put("table", userPo.table);
+        columns.put("idCol", userPo.id);
+        columns.put("accCol", userPo.acc);
+        columns.put("pwdCol", userPo.pwd);
+        columns.put("nameCol", userPo.name);
+        columns.put("roleCol", userPo.roleCode);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("acc", acc);
+        params.addValue("pwd", Encrypt.sha3Encrypt(pwd));
 
         try {
-            List<Map<String, Object>> result = jdbc.queryForList(sql, params);
+            List<Map<String, Object>> result = jdbc.queryForList(sql, columns, params);
             if (result.size() < 1) {
                 return Mono.just(ResponseHandler.error(StatusCode.DATA_ERROR, null));
             }
@@ -66,22 +69,23 @@ public class UserDao extends BaseDao {
             return Mono.just(ResponseHandler.ok().toMap(jwt));
 
         } catch (Exception e) {
-            errHandler.handle(e, null);
+            errHandler.handle(e);
             return dbErrorHandler.handle(e);
         }
     }
 
     public Mono<ResponseHandler> UserInfo(WebInput webInput, String acc) {
 
-        String sql = "SELECT !accCol, !nameCol FROM !table WHERE !accCol=:acc";
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("table", userPo.table);
-        params.put("accCol", userPo.acc);
-        params.put("nameCol", userPo.name);
-        params.put("acc", acc);
+        String sql = "SELECT #accCol, #nameCol FROM #table WHERE #accCol=:acc";
+        Map<String, String> columns = new HashMap<String, String>();
+        columns.put("table", userPo.table);
+        columns.put("accCol", userPo.acc);
+        columns.put("nameCol", userPo.name);
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("acc", acc);
 
         try {
-            List<Map<String, Object>> result = jdbc.queryForList(sql, params);
+            List<Map<String, Object>> result = jdbc.queryForList(sql, columns, params);
             if (result.size() < 1) {
                 return Mono.just(ResponseHandler.ok().toMap(result));
             }
@@ -93,7 +97,7 @@ public class UserDao extends BaseDao {
             return Mono.just(ResponseHandler.ok().toMap(entity));
 
         } catch (Exception e) {
-            errHandler.handle(e, null);
+            errHandler.handle(e);
             return dbErrorHandler.handle(e);
         }
     }
