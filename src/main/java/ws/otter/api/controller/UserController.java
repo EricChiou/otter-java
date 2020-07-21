@@ -29,7 +29,7 @@ public class UserController extends BaseController {
 
         Object[] params = new Object[] { signUpVo.acc, signUpVo.pwd, signUpVo.name };
         if (!Check.param(params)) {
-            return Mono.just(ResponseHandler.error(StatusCode.FORMAT_ERROR, null).toMap(null));
+            return ResponseHandler.error(StatusCode.FORMAT_ERROR, null).toMono();
         }
 
         return userService.UserSignUp(webInput, signUpVo);

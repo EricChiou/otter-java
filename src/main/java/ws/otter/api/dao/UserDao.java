@@ -40,7 +40,7 @@ public class UserDao extends BaseDao {
             return dbErrorHandler.handle(e);
         }
 
-        return Mono.just(ResponseHandler.ok().toMap(null));
+        return ResponseHandler.ok().toMono();
     }
 
     public Mono<ResponseHandler> UserSignIn(WebInput webInput, String acc, String pwd) {
@@ -60,13 +60,13 @@ public class UserDao extends BaseDao {
         try {
             List<Map<String, Object>> result = jdbc.queryForList(sql, columns, params);
             if (result.size() < 1) {
-                return Mono.just(ResponseHandler.error(StatusCode.DATA_ERROR, null));
+                return ResponseHandler.error(StatusCode.DATA_ERROR, null).toMono();
             }
 
             Map<String, Object> userData = result.get(0);
             JWT payload = JWT.dbMap2Payload(userData);
             String jwt = JWT.gen(payload);
-            return Mono.just(ResponseHandler.ok().toMap(jwt));
+            return ResponseHandler.ok().toMono(jwt);
 
         } catch (Exception e) {
             errHandler.handle(e);
@@ -87,14 +87,14 @@ public class UserDao extends BaseDao {
         try {
             List<Map<String, Object>> result = jdbc.queryForList(sql, columns, params);
             if (result.size() < 1) {
-                return Mono.just(ResponseHandler.ok().toMap(result));
+                return ResponseHandler.ok().toMono(result);
             }
 
             Map<String, Object> userData = result.get(0);
             UserEntity entity = new UserEntity();
             entity.acc = (String) userData.get(userPo.acc);
             entity.name = (String) userData.get(userPo.name);
-            return Mono.just(ResponseHandler.ok().toMap(entity));
+            return ResponseHandler.ok().toMono(entity);
 
         } catch (Exception e) {
             errHandler.handle(e);

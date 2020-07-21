@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.http.HttpStatus;
 
+import reactor.core.publisher.Mono;
 import ws.otter.constants.StatusCode;
 
 public class ResponseHandler {
@@ -53,6 +54,18 @@ public class ResponseHandler {
         response.getWriter().write(error(StatusCode.TOKEN_ERROR, null).toStr(null));
         response.getWriter().flush();
         response.getWriter().close();
+    }
+
+    @JsonIgnore
+    public Mono<ResponseHandler> toMono() {
+        return Mono.just(this);
+    }
+
+    @JsonIgnore
+    public Mono<ResponseHandler> toMono(Object data) {
+        this.data = data;
+
+        return Mono.just(this);
     }
 
     @JsonIgnore
