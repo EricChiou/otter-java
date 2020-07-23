@@ -30,6 +30,14 @@ public class JdbcConvert {
         return jdbc.queryForList(convertSql, params);
     }
 
+    public <T> List<T> queryForList(String sql, Map<String, String> po, MapSqlParameterSource params,
+            Class<T> elementType) throws DataAccessException {
+
+        String convertSql = convertPo2Sql(sql, po);
+
+        return jdbc.queryForList(convertSql, params, elementType);
+    }
+
     private String convertPo2Sql(String sql, Map<String, String> po) {
 
         String convertSql = "";

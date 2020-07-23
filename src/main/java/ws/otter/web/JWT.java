@@ -13,7 +13,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import ws.otter.config.JwtConfig;
-import ws.otter.model.user.UserPo;
 
 @Component
 public class JWT {
@@ -23,19 +22,12 @@ public class JWT {
     public String name; // user name
     public String role; // user role
 
-    private static final UserPo userPo = new UserPo();
-
     private static final String USER_ID = "id"; // user id
     private static final String USER_ACC = "acc"; // user account
     private static final String USER_NAME = "name"; // user name
     private static final String USER_ROLE = "role"; // user role
 
     private static final SecretKey KEY = Keys.hmacShaKeyFor(JwtConfig.secret.getBytes());
-
-    public static JWT dbMap2Payload(Map<String, Object> userData) {
-        return setPayload((Integer) userData.get(userPo.id), (String) userData.get(userPo.acc),
-                (String) userData.get(userPo.name), (String) userData.get(userPo.roleCode));
-    }
 
     public static JWT setPayload(Integer id, String acc, String name, String role) {
 

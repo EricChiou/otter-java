@@ -6,9 +6,11 @@ import java.security.MessageDigest;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.util.encoders.Hex;
+import org.springframework.stereotype.Component;
 
 import ws.otter.config.UserConfig;
 
+@Component
 public class Encrypt {
 
   public static String md5Encrypt(String str) {

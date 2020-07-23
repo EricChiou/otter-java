@@ -1,13 +1,14 @@
-package ws.otter.api.controller.base;
+package ws.otter.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ws.otter.api.service.UserService;
+import ws.otter.api.service.user.UserService;
 import ws.otter.util.ErrorHandler;
 
 abstract public class BaseController {
 
-    protected ErrorHandler errHandler = new ErrorHandler();
+    @Autowired
+    protected ErrorHandler errHandler;
 
     @Autowired
     protected UserService userService;

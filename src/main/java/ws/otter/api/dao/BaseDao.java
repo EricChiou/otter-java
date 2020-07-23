@@ -1,4 +1,4 @@
-package ws.otter.api.dao.base;
+package ws.otter.api.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,10 +12,13 @@ abstract public class BaseDao {
     @Autowired
     protected JdbcConvert jdbc;
 
-    protected DbErrorHandler dbErrorHandler = new DbErrorHandler();
+    @Autowired
+    protected ErrorHandler errHandler;
 
-    protected UserPo userPo = new UserPo();
+    @Autowired
+    protected DbErrorHandler dbErrorHandler;
 
-    protected ErrorHandler errHandler = new ErrorHandler();
+    @Autowired
+    protected UserPo userPo;
 
 }

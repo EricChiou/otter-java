@@ -1,6 +1,9 @@
-package ws.otter.api.path;
+package ws.otter.api.url;
 
-public class UserPath {
+import org.springframework.stereotype.Component;
+
+@Component
+public class UserUrl {
 
     public static final String putUserSignUp = "/user/signUp";
     public static final String postUserSignIn = "/user/signIn";

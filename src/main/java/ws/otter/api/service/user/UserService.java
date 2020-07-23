@@ -1,9 +1,9 @@
-package ws.otter.api.service;
+package ws.otter.api.service.user;
 
 import org.springframework.stereotype.Service;
 
 import reactor.core.publisher.Mono;
-import ws.otter.api.service.base.BaseService;
+import ws.otter.api.service.BaseService;
 import ws.otter.api.vo.user.*;
 import ws.otter.web.ResponseHandler;
 import ws.otter.web.WebInput;

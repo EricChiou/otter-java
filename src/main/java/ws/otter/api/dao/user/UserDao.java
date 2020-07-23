@@ -1,4 +1,4 @@
-package ws.otter.api.dao;
+package ws.otter.api.dao.user;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import reactor.core.publisher.Mono;
-import ws.otter.api.dao.base.BaseDao;
+import ws.otter.api.dao.BaseDao;
 import ws.otter.api.vo.user.*;
 import ws.otter.constants.StatusCode;
 import ws.otter.model.user.UserEntity;
@@ -58,13 +58,12 @@ public class UserDao extends BaseDao {
         params.addValue("pwd", Encrypt.sha3Encrypt(pwd));
 
         try {
-            List<Map<String, Object>> result = jdbc.queryForList(sql, columns, params);
+            List<JWT> result = jdbc.queryForList(sql, columns, params, JWT.class);
             if (result.size() < 1) {
                 return ResponseHandler.error(StatusCode.DATA_ERROR, null).toMono();
             }
 
-            Map<String, Object> userData = result.get(0);
-            JWT payload = JWT.dbMap2Payload(userData);
+            JWT payload = result.get(0);
             String jwt = JWT.gen(payload);
             return ResponseHandler.ok().toMono(jwt);
 
@@ -85,15 +84,12 @@ public class UserDao extends BaseDao {
         params.addValue("acc", acc);
 
         try {
-            List<Map<String, Object>> result = jdbc.queryForList(sql, columns, params);
+            List<UserEntity> result = jdbc.queryForList(sql, columns, params, UserEntity.class);
             if (result.size() < 1) {
                 return ResponseHandler.ok().toMono(result);
             }
 
-            Map<String, Object> userData = result.get(0);
-            UserEntity entity = new UserEntity();
-            entity.acc = (String) userData.get(userPo.acc);
-            entity.name = (String) userData.get(userPo.name);
+            UserEntity entity = result.get(0);
             return ResponseHandler.ok().toMono(entity);
 
         } catch (Exception e) {

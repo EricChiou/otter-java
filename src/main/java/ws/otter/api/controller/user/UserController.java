@@ -1,4 +1,4 @@
-package ws.otter.api.controller;
+package ws.otter.api.controller.user;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import reactor.core.publisher.Mono;
-import ws.otter.api.controller.base.BaseController;
-import ws.otter.api.path.UserPath;
+import ws.otter.api.controller.BaseController;
+import ws.otter.api.url.UserUrl;
 import ws.otter.api.vo.user.*;
 import ws.otter.constants.StatusCode;
 import ws.otter.util.Check;
@@ -21,7 +21,7 @@ import ws.otter.web.WebInput;
 @RestController
 public class UserController extends BaseController {
 
-    @PutMapping(UserPath.putUserSignUp)
+    @PutMapping(UserUrl.putUserSignUp)
     public Mono<ResponseHandler> UserSignUp(HttpServletRequest request,
             @RequestBody(required = true) SignUpVo signUpVo) {
 
@@ -35,7 +35,7 @@ public class UserController extends BaseController {
         return userService.UserSignUp(webInput, signUpVo);
     }
 
-    @GetMapping(UserPath.postUserSignIn)
+    @GetMapping(UserUrl.postUserSignIn)
     public Mono<ResponseHandler> UserSignIn(HttpServletRequest request, @RequestParam(required = true) String acc,
             @RequestParam(required = true) String pwd) {
 
@@ -44,7 +44,7 @@ public class UserController extends BaseController {
         return userService.UserSignIn(webInput, acc, pwd);
     }
 
-    @GetMapping(UserPath.getUserInfo)
+    @GetMapping(UserUrl.getUserInfo)
     public Mono<ResponseHandler> UserInfo(HttpServletRequest request, @PathVariable("acc") String acc) {
 
         WebInput webInput = new WebInput(request);

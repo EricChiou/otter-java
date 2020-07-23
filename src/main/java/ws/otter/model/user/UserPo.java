@@ -1,5 +1,8 @@
 package ws.otter.model.user;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class UserPo {
 
     // table name

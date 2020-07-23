@@ -1,13 +1,14 @@
-package ws.otter.api.service.base;
+package ws.otter.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ws.otter.api.dao.UserDao;
+import ws.otter.api.dao.user.UserDao;
 import ws.otter.util.ErrorHandler;
 
 abstract public class BaseService {
 
-    protected ErrorHandler errHandler = new ErrorHandler();
+    @Autowired
+    protected ErrorHandler errHandler;
 
     @Autowired
     protected UserDao userDao;
