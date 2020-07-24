@@ -2,9 +2,6 @@ package ws.otter.web;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class WebInput {
 
     public HttpServletRequest request;

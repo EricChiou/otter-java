@@ -22,20 +22,20 @@ public class JdbcConvert {
         return jdbc.update(convertSql, params);
     }
 
-    public List<Map<String, Object>> queryForList(String sql, Map<String, String> po, MapSqlParameterSource params)
+    public Map<String, Object> query(String sql, Map<String, String> po, MapSqlParameterSource params)
+            throws DataAccessException {
+
+        String convertSql = convertPo2Sql(sql, po);
+
+        return jdbc.queryForMap(convertSql, params);
+    }
+
+    public List<Map<String, Object>> queryList(String sql, Map<String, String> po, MapSqlParameterSource params)
             throws DataAccessException {
 
         String convertSql = convertPo2Sql(sql, po);
 
         return jdbc.queryForList(convertSql, params);
-    }
-
-    public <T> List<T> queryForList(String sql, Map<String, String> po, MapSqlParameterSource params,
-            Class<T> elementType) throws DataAccessException {
-
-        String convertSql = convertPo2Sql(sql, po);
-
-        return jdbc.queryForList(convertSql, params, elementType);
     }
 
     private String convertPo2Sql(String sql, Map<String, String> po) {

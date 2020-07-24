@@ -58,12 +58,16 @@ public class UserDao extends BaseDao {
         params.addValue("pwd", Encrypt.sha3Encrypt(pwd));
 
         try {
-            List<JWT> result = jdbc.queryForList(sql, columns, params, JWT.class);
-            if (result.size() < 1) {
+            Map<String, Object> result = jdbc.query(sql, columns, params);
+            if (result == null) {
                 return ResponseHandler.error(StatusCode.DATA_ERROR, null).toMono();
             }
 
-            JWT payload = result.get(0);
+            JWT payload = new JWT();
+            payload.id = (Integer) result.get(userPo.id);
+            payload.acc = (String) result.get(userPo.acc);
+            payload.name = (String) result.get(userPo.name);
+            payload.role = (String) result.get(userPo.roleCode);
             String jwt = JWT.gen(payload);
             return ResponseHandler.ok().toMono(jwt);
 
@@ -84,12 +88,16 @@ public class UserDao extends BaseDao {
         params.addValue("acc", acc);
 
         try {
-            List<UserEntity> result = jdbc.queryForList(sql, columns, params, UserEntity.class);
-            if (result.size() < 1) {
-                return ResponseHandler.ok().toMono(result);
+            List<Map<String, Object>> resultList = jdbc.queryList(sql, columns, params);
+            if (resultList.size() < 1) {
+                return ResponseHandler.ok().toMono(resultList);
             }
 
-            UserEntity entity = result.get(0);
+            Map<String, Object> result = resultList.get(0);
+            UserEntity entity = new UserEntity();
+            entity.acc = (String) result.get(userPo.acc);
+            entity.name = (String) result.get(userPo.name);
+
             return ResponseHandler.ok().toMono(entity);
 
         } catch (Exception e) {
