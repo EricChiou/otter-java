@@ -11,7 +11,7 @@ import ws.otter.web.WebInput;
 @Service
 public class UserService extends BaseService {
 
-    public Mono<ResponseHandler> UserSignUp(WebInput webInput, SignUpVo signUpVo) {
+    public Mono<ResponseHandler> UserSignUp(WebInput webInput, UserVo.SignUp signUpVo) {
         return userDao.UserSignUp(webInput, signUpVo);
     }
 

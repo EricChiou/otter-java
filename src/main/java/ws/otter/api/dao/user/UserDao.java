@@ -20,7 +20,7 @@ import ws.otter.web.WebInput;
 @Repository
 public class UserDao extends BaseDao {
 
-    public Mono<ResponseHandler> UserSignUp(WebInput webInput, SignUpVo signUpVo) {
+    public Mono<ResponseHandler> UserSignUp(WebInput webInput, UserVo.SignUp signUpVo) {
 
         String sql = "INSERT INTO #table ( #accCol, #pwdCol, #nameCol ) VALUES ( :acc, :pwd, :name )";
         Map<String, String> columns = new HashMap<String, String>();

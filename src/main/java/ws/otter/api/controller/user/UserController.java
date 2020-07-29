@@ -23,7 +23,7 @@ public class UserController extends BaseController {
 
     @PutMapping(UserUrl.putUserSignUp)
     public Mono<ResponseHandler> UserSignUp(HttpServletRequest request,
-            @RequestBody(required = true) SignUpVo signUpVo) {
+            @RequestBody(required = true) UserVo.SignUp signUpVo) {
 
         WebInput webInput = new WebInput(request);
 
