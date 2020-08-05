@@ -1,15 +1,14 @@
 package ws.otter.model.user;
 
+import javax.persistence.Table;
+
 import org.springframework.stereotype.Component;
 
+import ws.otter.model.BasePo;
+
 @Component
-public class UserPo {
-
-    // table name
-    public final String table = "user";
-
-    // pk
-    public final String pk = "id";
+@Table(name = "user")
+public class UserPo extends BasePo {
 
     // column name
     public final String id = "id";

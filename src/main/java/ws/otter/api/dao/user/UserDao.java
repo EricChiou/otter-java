@@ -23,7 +23,7 @@ public class UserDao extends BaseDao {
 
         String sql = "INSERT INTO #table ( #accCol, #pwdCol, #nameCol ) VALUES ( :acc, :pwd, :name )";
         MapParam columns = new MapParam();
-        columns.addValue("table", userPo.table);
+        columns.addValue("table", userPo.tableName());
         columns.addValue("accCol", userPo.acc);
         columns.addValue("pwdCol", userPo.pwd);
         columns.addValue("nameCol", userPo.name);
@@ -46,7 +46,7 @@ public class UserDao extends BaseDao {
 
         String sql = "SELECT #idCol, #accCol, #nameCol, #roleCol FROM #table WHERE #accCol=:acc AND #pwdCol=:pwd";
         MapParam columns = new MapParam();
-        columns.addValue("table", userPo.table);
+        columns.addValue("table", userPo.tableName());
         columns.addValue("idCol", userPo.id);
         columns.addValue("accCol", userPo.acc);
         columns.addValue("pwdCol", userPo.pwd);
@@ -82,7 +82,7 @@ public class UserDao extends BaseDao {
 
         String sql = "SELECT #accCol, #nameCol FROM #table WHERE #accCol=:acc";
         MapParam columns = new MapParam();
-        columns.addValue("table", userPo.table);
+        columns.addValue("table", userPo.tableName());
         columns.addValue("accCol", userPo.acc);
         columns.addValue("nameCol", userPo.name);
         MapSqlParameterSource params = new MapSqlParameterSource();
