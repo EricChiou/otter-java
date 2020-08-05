@@ -1,6 +1,6 @@
 package ws.otter.model;
 
-import javax.persistence.Table;
+import ws.otter.annotation.Table;
 
 public class BasePo {
 

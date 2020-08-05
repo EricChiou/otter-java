@@ -1,9 +1,8 @@
 package ws.otter.model.user;
 
-import javax.persistence.Table;
-
 import org.springframework.stereotype.Component;
 
+import ws.otter.annotation.Table;
 import ws.otter.model.BasePo;
 
 @Component
