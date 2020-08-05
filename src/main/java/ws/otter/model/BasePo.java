@@ -15,7 +15,12 @@ public class BasePo {
             }
         }
 
-        return c.toString();
+        String table = c.toString();
+        if (table.endsWith("Po") || table.endsWith("PO")) {
+            return table.substring(0, table.length() - 2);
+        }
+
+        return table;
     }
 
 }
