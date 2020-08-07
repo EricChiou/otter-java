@@ -28,6 +28,6 @@ public enum StatusCode {
     }
 
     public String getCode() {
-        return code;
+        return this.code;
     }
 }

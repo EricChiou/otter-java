@@ -29,7 +29,7 @@ public class JdbcRepackage {
 
     public int update(String sql, MapParam po, MapSqlParameterSource params) throws DataAccessException {
 
-        String convertSql = convertPo2Sql(sql, po);
+        String convertSql = convertSql(sql, po);
 
         return jdbc.update(convertSql, params);
     }
@@ -37,14 +37,14 @@ public class JdbcRepackage {
     public Map<String, Object> queryMap(String sql, MapParam po, MapSqlParameterSource params)
             throws DataAccessException {
 
-        String convertSql = convertPo2Sql(sql, po);
+        String convertSql = convertSql(sql, po);
 
         return jdbc.queryForMap(convertSql, params);
     }
 
     public <T> List<T> queryList(String sql, MapParam po, RowMapper<T> rowMapper) throws DataAccessException {
 
-        String convertSql = convertPo2Sql(sql, po);
+        String convertSql = convertSql(sql, po);
 
         return jdbc.query(convertSql, rowMapper);
     }
@@ -52,7 +52,7 @@ public class JdbcRepackage {
     public <T> List<T> queryList(String sql, MapParam po, MapSqlParameterSource params, RowMapper<T> rowMapper)
             throws DataAccessException {
 
-        String convertSql = convertPo2Sql(sql, po);
+        String convertSql = convertSql(sql, po);
 
         return jdbc.query(convertSql, params, rowMapper);
     }
@@ -60,31 +60,28 @@ public class JdbcRepackage {
     public List<Map<String, Object>> queryMapList(String sql, MapParam po, MapSqlParameterSource params)
             throws DataAccessException {
 
-        String convertSql = convertPo2Sql(sql, po);
+        String convertSql = convertSql(sql, po);
 
         return jdbc.queryForList(convertSql, params);
     }
 
-    private String convertPo2Sql(String sql, MapParam po) {
+    private String convertSql(String sql, MapParam po) {
 
         String convertSql = "";
-        for (Integer i = 0; i < sql.length(); i++) {
+        Integer preIndex = 0;
+        for (Integer i = 0; i < sql.length() - 1; i++) {
             Character c = sql.charAt(i);
             if (c == '#') {
                 String key = getKey(sql, i + 1);
                 String val = po.get(key);
                 if (val != null && !val.isEmpty()) {
-                    convertSql += val;
-                } else {
-                    convertSql += "#" + key;
+                    convertSql += sql.substring(preIndex, i) + val;
+                    i += key.length();
+                    preIndex = i + 1;
                 }
-
-                i += key.length();
-
-            } else {
-                convertSql += c;
             }
         }
+        convertSql += sql.substring(preIndex);
 
         return convertSql;
     }

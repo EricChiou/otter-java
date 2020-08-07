@@ -11,16 +11,16 @@ public class ErrorHandler {
 
     public void handle(Exception e) {
 
-        // logger.error(e);
+        logger.error(e.getMessage());
     }
 
     public void handle(Exception e, String msg) {
 
         if (msg != null && !"".equals(msg)) {
-            // logger.error(msg);
+            logger.error(msg);
 
         } else {
-            // logger.error(e.getMessage());
+            logger.error(e.getMessage());
         }
     }
 

@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 import ws.otter.api.dao.BaseDao;
 import ws.otter.api.vo.user.*;
 import ws.otter.constants.StatusCode;
+import ws.otter.constants.UserStatus;
 import ws.otter.model.user.UserEntity;
 import ws.otter.util.Encrypt;
 import ws.otter.util.jdbcRepackage.MapParam;
@@ -44,7 +45,7 @@ public class UserDao extends BaseDao {
 
     public Mono<ResponseHandler> UserSignIn(WebInput webInput, String acc, String pwd) {
 
-        String sql = "SELECT #userT.#idCol, #userT.#accCol, #userT.#nameCol, #userT.#roleCol, #roleT.#roleNameCol AS roleName FROM #userT "
+        String sql = "SELECT #userT.#idCol, #userT.#accCol, #userT.#nameCol, #userT.#roleCol, #userT.#statusCol, #roleT.#roleNameCol AS roleName FROM #userT "
                 + "INNER JOIN #roleT ON #userT.#roleCol = #roleT.#codeCol "
                 + "WHERE #userT.#accCol = :acc AND #userT.#pwdCol = :pwd";
         MapParam columns = new MapParam();
@@ -54,6 +55,7 @@ public class UserDao extends BaseDao {
         columns.addValue("pwdCol", userPo.pwd);
         columns.addValue("nameCol", userPo.name);
         columns.addValue("roleCol", userPo.roleCode);
+        columns.addValue("statusCol", userPo.status);
         columns.addValue("roleT", rolePo.tableName());
         columns.addValue("codeCol", rolePo.code);
         columns.addValue("roleNameCol", rolePo.name);
@@ -63,6 +65,10 @@ public class UserDao extends BaseDao {
 
         try {
             List<JWT> resultList = jdbc.queryList(sql, columns, params, (rowData, rowNum) -> {
+                if (!UserStatus.Active.getStatus().equals(rowData.getString(userPo.status))) {
+                    return null;
+                }
+
                 JWT jwt = new JWT();
                 jwt.id = (Integer) rowData.getInt(userPo.id);
                 jwt.acc = rowData.getString(userPo.acc);
@@ -71,10 +77,9 @@ public class UserDao extends BaseDao {
                 jwt.roleName = rowData.getString("roleName");
                 return jwt;
             });
-            if (resultList == null || resultList.size() == 0) {
+            if (resultList == null || resultList.size() == 0 || resultList.get(0) == null) {
                 return ResponseHandler.error(StatusCode.DATA_ERROR, null).toMono();
             }
-
             String jwt = JWT.gen(resultList.get(0));
             return ResponseHandler.ok().toMono(jwt);
 
