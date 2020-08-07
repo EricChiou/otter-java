@@ -5,13 +5,13 @@ import java.util.Map;
 
 public class MapParam {
 
-    private Map<String, Object> mp = new HashMap<String, Object>();
+    private Map<String, String> mp = new HashMap<String, String>();
 
-    public void addValue(String key, Object value) {
+    public void addValue(String key, String value) {
         this.mp.put(key, value);
     }
 
-    public Object get(String key) {
+    public String get(String key) {
         return this.mp.get(key);
     }
 }

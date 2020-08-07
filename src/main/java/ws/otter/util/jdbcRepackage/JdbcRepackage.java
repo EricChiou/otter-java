@@ -1,5 +1,6 @@
 package ws.otter.util.jdbcRepackage;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,16 @@ public class JdbcRepackage {
 
     @Autowired
     private NamedParameterJdbcTemplate jdbc;
+
+    private static final String SpecificChar = "\"':.,;(){}[]&|=+-*%/\\<>^";
+    private static final Boolean[] specificChar = new Boolean[128];
+
+    static {
+        Arrays.fill(specificChar, false);
+        for (Character c : SpecificChar.toCharArray()) {
+            specificChar[c] = true;
+        }
+    }
 
     public int update(String sql, MapParam po, MapSqlParameterSource params) throws DataAccessException {
 
@@ -61,11 +72,11 @@ public class JdbcRepackage {
             Character c = sql.charAt(i);
             if (c == '#') {
                 String key = getKey(sql, i + 1);
-                String val = po.get(key) == null ? "null" : po.get(key).toString();
-                if (val != null && !"".equals(val)) {
+                String val = po.get(key);
+                if (val != null && !val.isEmpty()) {
                     convertSql += val;
                 } else {
-                    convertSql += key;
+                    convertSql += "#" + key;
                 }
 
                 i += key.length();
@@ -82,13 +93,21 @@ public class JdbcRepackage {
 
         for (Integer i = beginIndex; i < sql.length(); i++) {
             Character c = sql.charAt(i);
-            if (c == ' ' || c == '=' || c == ',' || c == ';' || c == '\'' || c == '"' || c == '(' || c == ')'
-                    || c == '{' || c == '}' || c == '\n' || c == '\r' || c == '*' || c == '&' || c == '|' || c == '%') {
+            if (isSpecificChar(c)) {
                 return sql.substring(beginIndex, i);
             }
         }
 
         return sql.substring(beginIndex);
+    }
+
+    private Boolean isSpecificChar(Character c) {
+        try {
+            return (c < 128 && specificChar[c]) || Character.isWhitespace(c);
+
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

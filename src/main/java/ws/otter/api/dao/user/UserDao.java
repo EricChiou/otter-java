@@ -44,14 +44,19 @@ public class UserDao extends BaseDao {
 
     public Mono<ResponseHandler> UserSignIn(WebInput webInput, String acc, String pwd) {
 
-        String sql = "SELECT #idCol, #accCol, #nameCol, #roleCol FROM #table WHERE #accCol=:acc AND #pwdCol=:pwd";
+        String sql = "SELECT #userT.#idCol, #userT.#accCol, #userT.#nameCol, #userT.#roleCol, #roleT.#roleNameCol AS roleName FROM #userT "
+                + "INNER JOIN #roleT ON #userT.#roleCol = #roleT.#codeCol "
+                + "WHERE #userT.#accCol = :acc AND #userT.#pwdCol = :pwd";
         MapParam columns = new MapParam();
-        columns.addValue("table", userPo.tableName());
+        columns.addValue("userT", userPo.tableName());
         columns.addValue("idCol", userPo.id);
         columns.addValue("accCol", userPo.acc);
         columns.addValue("pwdCol", userPo.pwd);
         columns.addValue("nameCol", userPo.name);
         columns.addValue("roleCol", userPo.roleCode);
+        columns.addValue("roleT", rolePo.tableName());
+        columns.addValue("codeCol", rolePo.code);
+        columns.addValue("roleNameCol", rolePo.name);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("acc", acc);
         params.addValue("pwd", Encrypt.sha3Encrypt(pwd));
@@ -63,6 +68,7 @@ public class UserDao extends BaseDao {
                 jwt.acc = rowData.getString(userPo.acc);
                 jwt.name = rowData.getString(userPo.name);
                 jwt.role = rowData.getString(userPo.roleCode);
+                jwt.roleName = rowData.getString("roleName");
                 return jwt;
             });
             if (resultList == null || resultList.size() == 0) {

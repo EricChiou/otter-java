@@ -21,21 +21,24 @@ public class JWT {
     public String acc; // user account
     public String name; // user name
     public String role; // user role
+    public String roleName; // user role name
 
     private static final String USER_ID = "id"; // user id
     private static final String USER_ACC = "acc"; // user account
     private static final String USER_NAME = "name"; // user name
     private static final String USER_ROLE = "role"; // user role
+    private static final String USER_ROLE_NAME = "roleName"; // user role name
 
     private static final SecretKey KEY = Keys.hmacShaKeyFor(JwtConfig.secret.getBytes());
 
-    public static JWT setPayload(Integer id, String acc, String name, String role) {
+    public static JWT setPayload(Integer id, String acc, String name, String role, String roleName) {
 
         JWT payload = new JWT();
         payload.id = id;
         payload.acc = acc;
         payload.name = name;
         payload.role = role;
+        payload.roleName = roleName;
 
         return payload;
     }
@@ -71,6 +74,7 @@ public class JWT {
         claims.put(USER_ACC, payload.acc);
         claims.put(USER_NAME, payload.name);
         claims.put(USER_ROLE, payload.role);
+        claims.put(USER_ROLE_NAME, payload.roleName);
 
         return claims;
     }
@@ -82,6 +86,7 @@ public class JWT {
         payload.acc = claims.get(USER_ACC).toString();
         payload.name = claims.get(USER_NAME).toString();
         payload.role = claims.get(USER_ROLE).toString();
+        payload.roleName = claims.get(USER_ROLE_NAME).toString();
 
         return payload;
     }

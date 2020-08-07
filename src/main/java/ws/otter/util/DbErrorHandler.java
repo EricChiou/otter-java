@@ -11,7 +11,7 @@ public class DbErrorHandler {
 
     public Mono<ResponseHandler> handle(Exception e) {
         String msg = e.getMessage();
-        if (e.getMessage().indexOf("Duplicate") > 0) {
+        if (msg != null && msg.indexOf("Duplicate") > 0) {
             return ResponseHandler.error(StatusCode.DUPLICATE, msg).toMono();
         }
 
