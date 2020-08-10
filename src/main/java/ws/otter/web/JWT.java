@@ -1,5 +1,6 @@
 package ws.otter.web;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,14 +53,21 @@ public class JWT {
 
         Date exp = new Date(System.currentTimeMillis() + (JwtConfig.exp * 1000));
         String jwt = Jwts.builder().setClaims(claims).setExpiration(exp).signWith(KEY).compact();
+        String[] jwtSplit = jwt.split("\\.");
+        String signature = jwtSplit[2];
+        signature = new String(Base64.getEncoder().encode(signature.getBytes())); // encode to base64
 
-        return jwt;
-
+        return jwtSplit[0] + "." + jwtSplit[1] + "." + signature;
     }
 
     public static Payload verify(String jwt) {
 
         try {
+            String[] jwtSplit = jwt.split("\\.");
+            String signature = jwtSplit[2];
+            signature = new String(Base64.getDecoder().decode(signature.getBytes())); // decode signature
+            jwt = jwtSplit[0] + "." + jwtSplit[1] + "." + signature;
+
             Claims claims = Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(jwt).getBody();
 
             return decodeClaim(claims);

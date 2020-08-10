@@ -17,12 +17,10 @@ public class ErrorHandler {
 
     public void handle(Exception e, String msg) {
 
-        if (msg != null && !"".equals(msg)) {
-            logger.error(msg);
-
-        } else {
-            logger.error(e.getMessage());
-        }
+        System.out.println(msg);
+        System.out.println(e.getMessage());
+        logger.error(msg);
+        logger.error(e.getMessage());
     }
 
 }
