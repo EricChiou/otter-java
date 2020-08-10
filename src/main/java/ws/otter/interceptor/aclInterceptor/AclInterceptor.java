@@ -25,7 +25,7 @@ public class AclInterceptor extends HandlerInterceptorAdapter {
         }
 
         String jwt = header.substring(JwtConfig.prefix.length());
-        JWT payload = JWT.verify(jwt);
+        JWT.Payload payload = JWT.verify(jwt);
         if (payload == null) {
             ResponseHandler.setHttpServletResponse(response, StatusCode.TOKEN_ERROR);
             return false;

@@ -1,7 +1,9 @@
 package ws.otter.api.dao.user;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.stereotype.Repository;
 
@@ -45,9 +47,10 @@ public class UserDao extends BaseDao {
 
     public Mono<ResponseHandler> UserSignIn(WebInput webInput, String acc, String pwd) {
 
-        String sql = "SELECT #userT.#idCol, #userT.#accCol, #userT.#nameCol, #userT.#roleCol, #userT.#statusCol, #roleT.#roleNameCol AS roleName FROM #userT "
-                + "INNER JOIN #roleT ON #userT.#roleCol = #roleT.#codeCol "
-                + "WHERE #userT.#accCol = :acc AND #userT.#pwdCol = :pwd";
+        String roleNameAs = "roleName";
+        String sql = "SELECT user.#idCol, user.#accCol, user.#pwdCol, user.#nameCol, user.#roleCol, user.#statusCol, role.#roleNameCol AS #roleNameAs "
+                + "FROM #userT user " + "INNER JOIN #roleT role ON user.#roleCol = role.#codeCol "
+                + "WHERE user.#accCol = :acc";
         MapParam columns = new MapParam();
         columns.addValue("userT", userPo.tableName());
         columns.addValue("idCol", userPo.id);
@@ -59,33 +62,47 @@ public class UserDao extends BaseDao {
         columns.addValue("roleT", rolePo.tableName());
         columns.addValue("codeCol", rolePo.code);
         columns.addValue("roleNameCol", rolePo.name);
+        columns.addValue("roleNameAs", roleNameAs);
         MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("acc", acc);
-        params.addValue("pwd", Encrypt.sha3Encrypt(pwd));
 
         try {
-            List<JWT> resultList = jdbc.queryList(sql, columns, params, (rowData, rowNum) -> {
-                if (!UserStatus.Active.getStatus().equals(rowData.getString(userPo.status))) {
-                    return null;
-                }
-
-                JWT jwt = new JWT();
-                jwt.id = (Integer) rowData.getInt(userPo.id);
-                jwt.acc = rowData.getString(userPo.acc);
-                jwt.name = rowData.getString(userPo.name);
-                jwt.role = rowData.getString(userPo.roleCode);
-                jwt.roleName = rowData.getString("roleName");
-                return jwt;
-            });
-            if (resultList == null || resultList.size() == 0 || resultList.get(0) == null) {
+            List<Map<String, Object>> resultList = jdbc.queryMapList(sql, columns, params);
+            // check sql result
+            if (resultList == null || resultList.size() == 0) {
                 return ResponseHandler.error(StatusCode.DATA_ERROR, null).toMono();
             }
-            String jwt = JWT.gen(resultList.get(0));
+            Map<String, Object> result = resultList.get(0);
+
+            // check pwd
+            String resultPwd = (String) result.get(userPo.pwd);
+            if (!resultPwd.equals(Encrypt.sha3Encrypt(pwd))) {
+                return ResponseHandler.error(StatusCode.DATA_ERROR, null).toMono();
+            }
+
+            // check account status
+            String resultStatus = (String) result.get(userPo.status);
+            if (!resultStatus.equals(UserStatus.Active.getStatus())) {
+                return ResponseHandler.error(StatusCode.ACC_INACTIVE, null).toMono();
+            }
+
+            JWT.Payload payload = new JWT.Payload();
+            payload.id = (Integer) result.get(userPo.id);
+            payload.acc = (String) result.get(userPo.acc);
+            payload.name = (String) result.get(userPo.name);
+            payload.role = (String) result.get(userPo.roleCode);
+            payload.roleName = (String) result.get(roleNameAs);
+
+            String jwt = JWT.gen(payload);
             return ResponseHandler.ok().toMono(jwt);
+
+        } catch (DataAccessException e) {
+            errHandler.handle(e);
+            return dbErrorHandler.handle(e);
 
         } catch (Exception e) {
             errHandler.handle(e);
-            return dbErrorHandler.handle(e);
+            return ResponseHandler.error(StatusCode.SERVER_ERROR, null).toMono();
         }
     }
 

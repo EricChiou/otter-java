@@ -17,12 +17,15 @@ import ws.otter.config.JwtConfig;
 @Component
 public class JWT {
 
-    public Integer id; // user id
-    public String acc; // user account
-    public String name; // user name
-    public String role; // user role
-    public String roleName; // user role name
+    public static class Payload {
+        public Integer id; // user id
+        public String acc; // user account
+        public String name; // user name
+        public String role; // user role
+        public String roleName; // user role name
+    }
 
+    // payload json key
     private static final String USER_ID = "id"; // user id
     private static final String USER_ACC = "acc"; // user account
     private static final String USER_NAME = "name"; // user name
@@ -31,9 +34,9 @@ public class JWT {
 
     private static final SecretKey KEY = Keys.hmacShaKeyFor(JwtConfig.secret.getBytes());
 
-    public static JWT setPayload(Integer id, String acc, String name, String role, String roleName) {
+    public static Payload setPayload(Integer id, String acc, String name, String role, String roleName) {
 
-        JWT payload = new JWT();
+        Payload payload = new Payload();
         payload.id = id;
         payload.acc = acc;
         payload.name = name;
@@ -43,7 +46,7 @@ public class JWT {
         return payload;
     }
 
-    public static String gen(JWT payload) {
+    public static String gen(Payload payload) {
 
         Map<String, Object> claims = encodeClaim(payload);
 
@@ -54,7 +57,7 @@ public class JWT {
 
     }
 
-    public static JWT verify(String jwt) {
+    public static Payload verify(String jwt) {
 
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(jwt).getBody();
@@ -67,7 +70,7 @@ public class JWT {
 
     }
 
-    private static Map<String, Object> encodeClaim(JWT payload) {
+    private static Map<String, Object> encodeClaim(Payload payload) {
 
         Map<String, Object> claims = new HashMap<String, Object>();
         claims.put(USER_ID, payload.id);
@@ -79,9 +82,9 @@ public class JWT {
         return claims;
     }
 
-    private static JWT decodeClaim(Claims claims) {
+    private static Payload decodeClaim(Claims claims) {
 
-        JWT payload = new JWT();
+        Payload payload = new Payload();
         payload.id = (Integer) claims.get(USER_ID);
         payload.acc = claims.get(USER_ACC).toString();
         payload.name = claims.get(USER_NAME).toString();

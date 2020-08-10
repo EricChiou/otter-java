@@ -3,6 +3,8 @@ package ws.otter.constants;
 public enum StatusCode {
     OK("ok"),
 
+    ACC_INACTIVE("accInactive"),
+
     DUPLICATE("duplicate"),
 
     PERMISSION_DENIED("permissionDenied"),
