@@ -6,7 +6,7 @@ import ws.otter.annotation.Table;
 import ws.otter.model.BasePo;
 
 @Component
-@Table(name = "user")
+@Table(name = "user", pk = "id")
 public class UserPo extends BasePo {
 
     // column name

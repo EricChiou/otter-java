@@ -26,7 +26,7 @@ public class UserDao extends BaseDao {
 
         String sql = "INSERT INTO #table ( #accCol, #pwdCol, #nameCol ) VALUES ( :acc, :pwd, :name )";
         MapParam columns = new MapParam();
-        columns.addValue("table", userPo.tableName());
+        columns.addValue("table", userPo.table());
         columns.addValue("accCol", userPo.acc);
         columns.addValue("pwdCol", userPo.pwd);
         columns.addValue("nameCol", userPo.name);
@@ -52,14 +52,14 @@ public class UserDao extends BaseDao {
                 + "FROM #userT user " + "INNER JOIN #roleT role ON user.#roleCol = role.#codeCol "
                 + "WHERE user.#accCol = :acc";
         MapParam columns = new MapParam();
-        columns.addValue("userT", userPo.tableName());
+        columns.addValue("userT", userPo.table());
         columns.addValue("idCol", userPo.id);
         columns.addValue("accCol", userPo.acc);
         columns.addValue("pwdCol", userPo.pwd);
         columns.addValue("nameCol", userPo.name);
         columns.addValue("roleCol", userPo.roleCode);
         columns.addValue("statusCol", userPo.status);
-        columns.addValue("roleT", rolePo.tableName());
+        columns.addValue("roleT", rolePo.table());
         columns.addValue("codeCol", rolePo.code);
         columns.addValue("roleNameCol", rolePo.name);
         columns.addValue("roleNameAs", roleNameAs);
@@ -110,7 +110,7 @@ public class UserDao extends BaseDao {
 
         String sql = "SELECT #accCol, #nameCol FROM #table WHERE #accCol=:acc";
         MapParam columns = new MapParam();
-        columns.addValue("table", userPo.tableName());
+        columns.addValue("table", userPo.table());
         columns.addValue("accCol", userPo.acc);
         columns.addValue("nameCol", userPo.name);
         MapSqlParameterSource params = new MapSqlParameterSource();

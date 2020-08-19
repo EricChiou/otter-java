@@ -8,4 +8,6 @@ public @interface Table {
 
     public String name();
 
+    public String pk() default "";
+
 }
