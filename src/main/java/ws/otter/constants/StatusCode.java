@@ -5,16 +5,20 @@ public enum StatusCode {
 
     ACC_INACTIVE("accInactive"),
 
+    /** duplicate in DB table */
     DUPLICATE("duplicate"),
 
     PERMISSION_DENIED("permissionDenied"),
 
     TOKEN_ERROR("tokenError"),
 
+    /** request parameters error */
     FORMAT_ERROR("formatError"),
 
+    /** request body json parse error */
     PARSE_ERROR("parseError"),
 
+    /** something error when execute DB */
     DB_ERROR("dbError"),
 
     DATA_ERROR("dataError"),
