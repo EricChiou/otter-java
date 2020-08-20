@@ -48,9 +48,11 @@ public class UserDao extends BaseDao {
     public Mono<ResponseHandler> UserSignIn(WebInput webInput, String acc, String pwd) {
 
         String roleNameAs = "roleName";
-        String sql = "SELECT user.#idCol, user.#accCol, user.#pwdCol, user.#nameCol, user.#roleCol, user.#statusCol, role.#roleNameCol AS #roleNameAs "
-                + "FROM #userT user " + "INNER JOIN #roleT role ON user.#roleCol = role.#codeCol "
-                + "WHERE user.#accCol = :acc";
+        String sql = "";
+        sql += "SELECT user.#idCol, user.#accCol, user.#pwdCol, user.#nameCol, user.#roleCol, user.#statusCol, role.#roleNameCol AS #roleNameAs ";
+        sql += "FROM #userT user ";
+        sql += "INNER JOIN #roleT role ON user.#roleCol = role.#codeCol ";
+        sql += "WHERE user.#accCol = :acc";
         MapParam columns = new MapParam();
         columns.addValue("userT", userPo.table());
         columns.addValue("idCol", userPo.id);
