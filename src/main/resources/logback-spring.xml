@@ -5,15 +5,36 @@
 
     <!-- 在 console 中顯示的文字格式 -->
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- Non ERROR level setting -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-                %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable
+                %black(%d{"yyyy-MM-dd HH:mm:ss"}) %green(%p) [%F:%L] - %white(%m%n)
+            </Pattern>
+        </layout>
+    </appender>
+
+    <!-- 在 console 中顯示的文字格式 -->
+    <appender name="Console_Error" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- ERROR level setting -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %black(%d{"yyyy-MM-dd HH:mm:ss"}) %r %red(%p) %blue([%t]) %yellow(%C)[%F:%L] - %white(%m%n)
             </Pattern>
         </layout>
     </appender>
 
     <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- ERROR level setting -->
+        <!-- Non ERROR level setting -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>DENY</onMatch>
@@ -22,7 +43,7 @@
         <!-- 檔案路徑 -->
         <file>${LOG_PATH}/now.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+            <Pattern>%d{"yyyy-MM-dd HH:mm:ss"} %p [%F:%L] - %m%n</Pattern>
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -45,7 +66,7 @@
         <!-- 檔案路徑 -->
         <file>${LOG_PATH}/error/now.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+            <Pattern>%d{"yyyy-MM-dd HH:mm:ss"} %r %p [%t] %C[%F:%L] - %m%n</Pattern>
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -58,12 +79,10 @@
         </rollingPolicy>
     </appender>
 
-    <root level="warn">
+    <root level="info">
         <appender-ref ref="File" />
         <appender-ref ref="File_Error" />
         <appender-ref ref="Console" />
-    </root>
-    <root level="info">
-        <appender-ref ref="Console" />
+        <appender-ref ref="Console_Error" />
     </root>
 </configuration>
